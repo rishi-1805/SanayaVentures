@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Search Products | Sanaya Ventures</title>
+    <meta name="description"
+          content="Explore products curated by Sanaya Ventures and find your next favourite.">
+
+    <th:block th:replace="~{fragments :: styles}"></th:block>
+
+    <style>
+        /* Search page only: keeps the shared site styles unchanged */
+
+        .search-page {
+            padding-top: 24px;
+            padding-bottom: 70px;
+        }
+
+        .search-breadcrumb {
+            font-size: 13px;
+            color: #77736b;
+            margin-bottom: 28px;
+        }
+
+        .search-breadcrumb a {
+            color: #8d6735;
+            text-decoration: none;
+        }
+
+        .search-hero {
+            background: linear-gradient(135deg, #171612, #302820);
+            color: #fff;
+            padding: 42px 24px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-eyebrow {
+            display: inline-block;
+            color: #d9b879;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .search-hero h1 {
+            color: #fff;
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: clamp(30px, 4vw, 43px);
+            font-weight: 500;
+            line-height: 1.2;
+            margin: 0 0 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .search-hero p {
+            color: #e1d9ce;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .search-hero strong {
+            color: #e3c58e;
+            font-weight: 600;
+        }
+
+        .search-page-form {
+            display: flex;
+            width: 100%;
+            max-width: 620px;
+            margin: 24px auto 0;
+            gap: 8px;
+        }
+
+        .search-page-form input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 15px;
+            border: 1px solid #ded5c7;
+            border-radius: 4px;
+            background: #fff;
+            color: #171612;
+            font: inherit;
+            outline: none;
+        }
+
+        .search-page-form input:focus {
+            border-color: #bd9851;
+            box-shadow: 0 0 0 3px rgba(189, 152, 81, 0.15);
+        }
+
+        .search-page-form button {
+            border: 1px solid #bd9851;
+            border-radius: 4px;
+            background: #bd9851;
+            color: #171612;
+            padding: 12px 23px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .search-page-form button:hover {
+            background: #d0ad68;
+        }
+
+        .search-results-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin: 32px 0 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e8e0d4;
+        }
+
+        .search-results-bar h2 {
+            margin: 0;
+            color: #29251f;
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: 25px;
+            font-weight: 500;
+        }
+
+        .search-results-count {
+            color: #77736b;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .search-result-card {
+            min-width: 0;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #eee7dc;
+            border-radius: 6px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .search-result-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(38, 30, 20, 0.08);
+        }
+
+        .search-result-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            aspect-ratio: 4 / 4.5;
+            background: #f5f0e7;
+            overflow: hidden;
+        }
+
+        .search-result-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 12px;
+            transition: transform 0.25s ease;
+        }
+
+        .search-result-card:hover .search-result-image img {
+            transform: scale(1.035);
+        }
+
+        .search-result-info {
+            padding: 17px;
+        }
+
+        .search-result-category {
+            display: block;
+            color: #9b7743;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .search-result-title {
+            display: block;
+            color: #24211c;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.5;
+            min-height: 45px;
+            overflow-wrap: anywhere;
+        }
+
+        .search-result-title:hover {
+            color: #99723a;
+        }
+
+        .search-result-prices {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 13px 0 16px;
+        }
+
+        .search-result-price {
+            color: #27231e;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .search-result-mrp {
+            color: #888078;
+            font-size: 13px;
+            text-decoration: line-through;
+        }
+
+        .search-result-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-result-actions a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 8px 12px;
+            border: 1px solid #bd9851;
+            border-radius: 4px;
+            color: #302719;
+            text-decoration: none;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .search-result-actions .search-details {
+            flex: 1;
+            background: #bd9851;
+        }
+
+        .search-result-actions .search-details:hover {
+            background: #d0ad68;
+        }
+
+        .search-result-actions .search-buy {
+            background: #fff;
+        }
+
+        .search-result-actions .search-buy:hover {
+            background: #f8f1e4;
+        }
+
+        .search-empty {
+            max-width: 650px;
+            margin: 35px auto;
+            padding: 42px 24px;
+            border: 1px solid #e8e0d4;
+            border-radius: 8px;
+            background: #fff;
+            text-align: center;
+        }
+
+        .search-empty-icon {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .search-empty h2 {
+            color: #29251f;
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: 27px;
+            font-weight: 500;
+            margin: 0 0 10px;
+        }
+
+        .search-empty p {
+            color: #77736b;
+            font-size: 14px;
+            line-height: 1.7;
+            margin: 0 0 22px;
+        }
+
+        .search-browse-button {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 4px;
+            background: #bd9851;
+            color: #171612;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .search-browse-button:hover {
+            background: #d0ad68;
+        }
+
+        @media (max-width: 1000px) {
+            .search-results-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 18px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .search-results-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 13px;
+            }
+
+            .search-result-info {
+                padding: 12px;
+            }
+
+            .search-result-title {
+                font-size: 13px;
+            }
+
+            .search-result-price {
+                font-size: 16px;
+            }
+
+            .search-result-actions {
+                flex-wrap: wrap;
+            }
+
+            .search-result-actions a {
+                padding: 8px;
+                font-size: 11px;
+            }
+
+            .search-hero {
+                padding: 32px 17px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .search-page-form {
+                gap: 5px;
+            }
+
+            .search-page-form button {
+                padding: 11px 13px;
+            }
+
+            .search-results-count {
+                font-size: 11px;
+            }
+
+            .search-result-actions a {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments :: header}"></div>
+
+    <main class="container content-wrap search-page">
+
+        <div class="search-breadcrumb">
+            <a th:href="@{/}">Home</a>
+            <span> / Search</span>
+        </div>
+
+        <section class="search-hero">
+            <span class="search-eyebrow">The Sanaya Selection</span>
+
+            <h1>Search Results</h1>
+
+            <p>
+                Results for:
+                <strong th:text="${query != null and !#strings.isEmpty(query) ? query : 'All products'}">
+                    Logitech
+                </strong>
+            </p>
+
+            <form class="search-page-form"
+                  th:action="@{/search}"
+                  method="get">
+
+                <input type="search"
+                       name="q"
+                       th:value="${query}"
+                       placeholder="Search products, brands, categories..."
+                       aria-label="Search products"
+                       required>
+
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <div th:if="${products != null and !products.isEmpty()}">
+
+            <div class="search-results-bar">
+                <h2>Products for you</h2>
+
+                <span class="search-results-count">
+                    <span th:text="${products.size()}">1</span>
+                    <span th:text="${products.size() == 1 ? 'product found' : 'products found'}">
+                        product found
+                    </span>
+                </span>
+            </div>
+
+            <div class="search-results-grid">
+
+                <article class="search-result-card"
+                         th:each="product : ${products}">
+
+                    <a class="search-result-image"
+                       th:href="@{/product/{slug}(slug=${product.slug})}"
+                       th:attr="aria-label=${'View ' + product.title}">
+
+                        <img th:if="${product.image1 != null and !#strings.isEmpty(product.image1)}"
+                             th:src="${product.image1}"
+                             th:alt="${product.title}"
+                             loading="lazy">
+
+                        <img th:unless="${product.image1 != null and !#strings.isEmpty(product.image1)}"
+                             src="https://placehold.co/600x675/f5f0e7/777777?text=Image+Coming+Soon"
+                             alt="Product image coming soon"
+                             loading="lazy">
+                    </a>
+
+                    <div class="search-result-info">
+
+                        <span class="search-result-category"
+                              th:text="${product.category}">
+                            Electronics
+                        </span>
+
+                        <a class="search-result-title"
+                           th:href="@{/product/{slug}(slug=${product.slug})}"
+                           th:text="${product.title}">
+                            Product title
+                        </a>
+
+                        <div class="search-result-prices">
+
+                            <span class="search-result-price"
+                                  th:if="${product.price != null}"
+                                  th:text="${'₹' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">
+                                ₹1,295.00
+                            </span>
+
+                            <span class="search-result-mrp"
+                                  th:if="${product.mrp != null and product.mrp > 0}"
+                                  th:text="${'₹' + #numbers.formatDecimal(product.mrp, 1, 'COMMA', 2, 'POINT')}">
+                                ₹1,499.00
+                            </span>
+
+                        </div>
+
+                        <div class="search-result-actions">
+
+                            <a class="search-details"
+                               th:href="@{/product/{slug}(slug=${product.slug})}">
+                                View Details
+                            </a>
+
+                            <a class="search-buy"
+                               th:if="${product.amazonLink != null and !#strings.isEmpty(product.amazonLink)}"
+                               th:href="${product.amazonLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener">
+                                Amazon ↗
+                            </a>
+
+                            <a class="search-buy"
+                               th:if="${product.flipkartLink != null and !#strings.isEmpty(product.flipkartLink)}"
+                               th:href="${product.flipkartLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener">
+                                Flipkart ↗
+                            </a>
+
+                            <a class="search-buy"
+                               th:if="${product.meeshoLink != null and !#strings.isEmpty(product.meeshoLink)}"
+                               th:href="${product.meeshoLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener">
+                                Meesho ↗
+                            </a>
+
+                            <a class="search-buy"
+                               th:if="${product.myntraLink != null and !#strings.isEmpty(product.myntraLink)}"
+                               th:href="${product.myntraLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener">
+                                Myntra ↗
+                            </a>
+
+                        </div>
+
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <section class="search-empty"
+                 th:if="${products == null or products.isEmpty()}">
+
+            <div class="search-empty-icon" aria-hidden="true">⌕</div>
+
+            <h2>No matching products found</h2>
+
+            <p>
+                We couldn't find a product matching
+                <strong th:if="${query != null and !#strings.isEmpty(query)}"
+                        th:text="${query}">your search</strong>.
+                Try another keyword or explore our collection.
+            </p>
+
+            <a th:href="@{/shop}" class="search-browse-button">
+                Browse All Products
+            </a>
+
+        </section>
+
+    </main>
+
+    <div th:replace="~{fragments :: footer}"></div>
+
+</body>
+</html>

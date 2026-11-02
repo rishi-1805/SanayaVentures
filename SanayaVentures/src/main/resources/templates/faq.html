@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FAQs | SA Sanaya Ventures</title>
+    <meta name="description"
+          content="Find answers to frequently asked questions about shopping, affiliate links, products, payments, delivery and returns at SA Sanaya Ventures.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <th:block th:replace="~{fragments :: styles}"></th:block>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f7f4ed;
+            color: #202020;
+            line-height: 1.7;
+        }
+
+        .faq-hero {
+            text-align: center;
+            padding: 75px 20px 55px;
+            background: #202020;
+            color: #fff;
+        }
+
+        .faq-hero .eyebrow {
+            color: #c5a46a;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .faq-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 6vw, 54px);
+            margin: 12px 0;
+        }
+
+        .faq-hero p {
+            color: #dedbd5;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .faq-container {
+            width: min(850px, 92%);
+            margin: 55px auto 75px;
+        }
+
+        .faq-intro {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .faq-intro h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .faq-intro p {
+            color: #777;
+        }
+
+        .faq-category {
+            margin-bottom: 35px;
+        }
+
+        .faq-category h3 {
+            font-family: 'Playfair Display', serif;
+            color: #8c6736;
+            font-size: 23px;
+            margin-bottom: 15px;
+        }
+
+        .faq-item {
+            background: #fff;
+            border: 1px solid #e9e0d4;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .faq-item summary {
+            padding: 19px 22px;
+            cursor: pointer;
+            font-weight: 600;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-item summary::after {
+            content: '+';
+            color: #a87943;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .faq-item[open] summary::after {
+            content: '−';
+        }
+
+        .faq-answer {
+            padding: 0 22px 20px;
+            color: #716b63;
+            font-size: 14px;
+        }
+
+        .faq-contact {
+            background: #eee7da;
+            text-align: center;
+            padding: 35px 20px;
+            border-radius: 12px;
+            margin-top: 45px;
+        }
+
+        .faq-contact h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .faq-contact p {
+            color: #716b63;
+            margin-bottom: 18px;
+        }
+
+        .contact-btn {
+            display: inline-block;
+            background: #4a292d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-btn:hover {
+            background: #765047;
+        }
+
+        @media(max-width: 600px) {
+            .faq-hero {
+                padding: 55px 18px 40px;
+            }
+
+            .faq-container {
+                margin-top: 35px;
+            }
+
+            .faq-item summary {
+                padding: 16px;
+                font-size: 14px;
+            }
+
+            .faq-answer {
+                padding: 0 16px 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Existing website header -->
+    <div th:replace="~{fragments :: header}"></div>
+
+    <section class="faq-hero">
+        <div class="eyebrow">We're Here to Help</div>
+        <h1>Frequently Asked Questions</h1>
+        <p>Everything you need to know about SA Sanaya Ventures and your shopping experience.</p>
+    </section>
+
+    <main class="faq-container">
+
+        <div class="faq-intro">
+            <h2>How Can We Help You?</h2>
+            <p>Find answers to some of the most common questions below.</p>
+        </div>
+
+        <section class="faq-category">
+            <h3>General Questions</h3>
+
+            <details class="faq-item">
+                <summary>What is SA Sanaya Ventures?</summary>
+                <div class="faq-answer">
+                    SA Sanaya Ventures is an online product discovery platform
+                    that showcases carefully selected products across categories
+                    such as electronics, accessories, watches, home decor and
+                    kitchen essentials.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How does SA Sanaya Ventures work?</summary>
+                <div class="faq-answer">
+                    You can explore products on our website, compare the
+                    information available and click a shopping link to visit
+                    the relevant marketplace for your purchase.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>Do I need an account to browse products?</summary>
+                <div class="faq-answer">
+                    No. You can browse our website and explore listed products
+                    without creating an account.
+                </div>
+            </details>
+        </section>
+
+        <section class="faq-category">
+            <h3>Products & Shopping</h3>
+
+            <details class="faq-item">
+                <summary>How can I purchase a product?</summary>
+                <div class="faq-answer">
+                    Open the product you like and select the available
+                    marketplace button, such as Amazon, Flipkart, Meesho
+                    or Myntra. You will be redirected to that marketplace
+                    to complete your purchase.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>Are all products sold directly by SA Sanaya Ventures?</summary>
+                <div class="faq-answer">
+                    No. SA Sanaya Ventures is a product discovery and
+                    affiliate platform. Purchases are completed through
+                    the respective third-party marketplaces.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>Are the prices displayed on the website final?</summary>
+                <div class="faq-answer">
+                    Displayed prices are provided for reference and may
+                    change. Please check the final price on the marketplace
+                    before placing your order.
+                </div>
+            </details>
+        </section>
+
+        <section class="faq-category">
+            <h3>Orders, Delivery & Returns</h3>
+
+            <details class="faq-item">
+                <summary>Who handles payment and delivery?</summary>
+                <div class="faq-answer">
+                    Payments, order processing, shipping and delivery are
+                    handled by the marketplace where you place your order.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How can I track my order?</summary>
+                <div class="faq-answer">
+                    You can track your order through the order history
+                    or tracking section of the marketplace where you
+                    completed your purchase.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What if I want to return or exchange a product?</summary>
+                <div class="faq-answer">
+                    Returns, exchanges and refunds are subject to the
+                    respective marketplace's policies. Please contact
+                    that marketplace for assistance with your order.
+                </div>
+            </details>
+        </section>
+
+        <section class="faq-category">
+            <h3>Affiliate Links & Support</h3>
+
+            <details class="faq-item">
+                <summary>What are affiliate links?</summary>
+                <div class="faq-answer">
+                    Some links on our website are affiliate links. If you
+                    make a qualifying purchase through these links, we may
+                    earn a commission at no additional cost to you.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>Does using an affiliate link increase the product price?</summary>
+                <div class="faq-answer">
+                    No. Using an affiliate link does not add an extra charge
+                    to your purchase. The final price is determined by the
+                    marketplace.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How can I contact SA Sanaya Ventures?</summary>
+                <div class="faq-answer">
+                    You can visit our Contact Us page to find the available
+                    ways to get in touch with us.
+                </div>
+            </details>
+        </section>
+
+        <section class="faq-contact">
+            <h3>Still Have Questions?</h3>
+            <p>We're happy to help. Visit our Contact Us page for assistance.</p>
+            <a th:href="@{/contact-us}" class="contact-btn">Contact Us</a>
+        </section>
+
+    </main>
+
+    <!-- Existing website footer -->
+    <div th:replace="~{fragments :: footer}"></div>
+
+</body>
+</html>

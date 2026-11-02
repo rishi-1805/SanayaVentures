@@ -1,0 +1,1177 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shop All Products | Sanaya Ventures</title>
+
+    <meta name="description"
+          content="Explore watches, electronics, mobile accessories, home decor and everyday essentials at Sanaya Ventures. Filter products and discover marketplace options.">
+
+    <th:block th:replace="~{fragments :: styles}"></th:block>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+        /* ==================================
+           SHOP PAGE DESIGN
+        ================================== */
+
+        :root {
+            --shop-bg: #faf7f0;
+            --shop-white: #ffffff;
+            --shop-text: #28241f;
+            --shop-muted: #777168;
+            --shop-gold: #bd9851;
+            --shop-gold-dark: #98743b;
+            --shop-wine: #4a292d;
+            --shop-border: #e8e0d4;
+            --shop-soft: #f2ece1;
+        }
+
+        body {
+            background: var(--shop-bg);
+            color: var(--shop-text);
+            font-family: "DM Sans", sans-serif;
+        }
+
+        .shop-page,
+        .shop-page * {
+            box-sizing: border-box;
+        }
+
+        .shop-page a {
+            text-decoration: none;
+        }
+
+        .shop-container {
+            width: min(1180px, 92%);
+            margin: 0 auto;
+        }
+
+        .shop-breadcrumb {
+            margin-bottom: 24px;
+            color: var(--shop-muted);
+            font-size: 12px;
+        }
+
+        .shop-breadcrumb a {
+            color: var(--shop-wine);
+        }
+
+        .shop-breadcrumb a:hover {
+            color: var(--shop-gold-dark);
+        }
+
+        /* ==================================
+           SHOP HERO
+        ================================== */
+
+        .shop-hero {
+            padding: 55px 0 48px;
+            border-bottom: 1px solid var(--shop-border);
+            background:
+                radial-gradient(
+                    circle at 90% 15%,
+                    rgba(189, 152, 81, 0.17),
+                    transparent 35%
+                ),
+                linear-gradient(120deg, #f3eadb, #fbf8f2);
+        }
+
+        .shop-hero h1 {
+            margin: 10px 0 14px;
+            color: var(--shop-wine);
+            font-family: "Playfair Display", serif;
+            font-size: clamp(36px, 5vw, 52px);
+            font-weight: 600;
+            letter-spacing: -1px;
+            line-height: 1.2;
+        }
+
+        .shop-eyebrow {
+            color: var(--shop-gold-dark);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .shop-hero p {
+            max-width: 650px;
+            margin: 0;
+            color: var(--shop-muted);
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        /* ==================================
+           MAIN CONTENT
+        ================================== */
+
+        .shop-content {
+            padding-top: 38px;
+            padding-bottom: 70px;
+        }
+
+        .shop-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .shop-results {
+            color: var(--shop-muted);
+            font-size: 13px;
+        }
+
+        .shop-results strong {
+            color: var(--shop-wine);
+            font-size: 15px;
+        }
+
+        .shop-toolbar select,
+        .shop-filter select,
+        .shop-filter input {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid var(--shop-border);
+            border-radius: 3px;
+            outline: none;
+            background: var(--shop-white);
+            color: var(--shop-text);
+            font-family: "DM Sans", sans-serif;
+            font-size: 13px;
+        }
+
+        .shop-toolbar select:focus,
+        .shop-filter select:focus,
+        .shop-filter input:focus {
+            border-color: var(--shop-gold-dark);
+            box-shadow: 0 0 0 2px rgba(189, 152, 81, 0.15);
+        }
+
+        .shop-toolbar-category {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .shop-toolbar-category label {
+            flex-shrink: 0;
+            color: var(--shop-muted);
+            font-size: 12px;
+        }
+
+        .shop-toolbar-category select {
+            width: auto;
+            min-width: 190px;
+        }
+
+        /* ==================================
+           FILTER PANEL
+        ================================== */
+
+        .shop-filter-panel {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1fr 1.4fr auto;
+            align-items: end;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding: 22px;
+            border: 1px solid var(--shop-border);
+            border-radius: 4px;
+            background: var(--shop-white);
+        }
+
+        .shop-filter-heading {
+            grid-column: 1 / -1;
+            margin: 0;
+            color: var(--shop-wine);
+            font-family: "Playfair Display", serif;
+            font-size: 20px;
+        }
+
+        .shop-filter {
+            min-width: 0;
+        }
+
+        .shop-filter label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--shop-muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .shop-price-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .shop-filter-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .shop-button {
+            display: inline-flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: "DM Sans", sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            transition: background 0.2s ease,
+                        color 0.2s ease,
+                        border-color 0.2s ease;
+        }
+
+        .shop-button:focus-visible,
+        .shop-card a:focus-visible {
+            outline: 3px solid var(--shop-gold);
+            outline-offset: 3px;
+        }
+
+        .shop-button-primary {
+            background: var(--shop-wine);
+            color: var(--shop-white);
+        }
+
+        .shop-button-primary:hover {
+            background: #663a40;
+            color: var(--shop-white);
+        }
+
+        .shop-button-secondary {
+            border-color: var(--shop-border);
+            background: var(--shop-white);
+            color: var(--shop-wine);
+        }
+
+        .shop-button-secondary:hover {
+            border-color: var(--shop-gold);
+            background: var(--shop-soft);
+        }
+
+        .shop-filter-status {
+            margin: -15px 0 24px;
+            color: var(--shop-muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        /* ==================================
+           PRODUCT GRID
+        ================================== */
+
+        .shop-product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .shop-card {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--shop-border);
+            border-radius: 4px;
+            background: var(--shop-white);
+            transition: box-shadow 0.2s ease,
+                        transform 0.2s ease;
+        }
+
+        .shop-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 26px rgba(46, 35, 20, 0.08);
+        }
+
+        .shop-card-image {
+            display: block;
+            overflow: hidden;
+            background: #f1ece3;
+        }
+
+        .shop-card-image img {
+            display: block;
+            width: 100%;
+            height: 245px;
+            padding: 12px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .shop-card:hover .shop-card-image img {
+            transform: scale(1.035);
+        }
+
+        .shop-card-info {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .shop-card-category {
+            margin-bottom: 8px;
+            color: var(--shop-gold-dark);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .shop-card-title {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--shop-text);
+            font-family: "Playfair Display", serif;
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+        }
+
+        .shop-card-title:hover {
+            color: var(--shop-gold-dark);
+        }
+
+        .shop-card-prices {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .shop-card-price {
+            color: var(--shop-wine);
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .shop-card-mrp {
+            color: #8b847a;
+            font-size: 12px;
+            text-decoration: line-through;
+        }
+
+        .shop-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: auto;
+        }
+
+        .shop-card-actions .shop-button {
+            min-height: 35px;
+            padding: 8px 10px;
+            font-size: 10px;
+        }
+
+        .shop-market-button {
+            border-color: var(--shop-border);
+            background: #ffffff;
+            color: var(--shop-wine);
+        }
+
+        .shop-market-button:hover {
+            border-color: var(--shop-gold);
+            background: var(--shop-soft);
+        }
+
+        .shop-no-results {
+            grid-column: 1 / -1;
+            padding: 42px 20px;
+            border: 1px dashed #d5c7b2;
+            border-radius: 4px;
+            background: #ffffff;
+            text-align: center;
+        }
+
+        .shop-no-results h2 {
+            margin: 0 0 10px;
+            color: var(--shop-wine);
+            font-family: "Playfair Display", serif;
+            font-size: 25px;
+        }
+
+        .shop-no-results p {
+            margin: 0 0 20px;
+            color: var(--shop-muted);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .shop-disclosure {
+            margin-top: 28px;
+            color: var(--shop-muted);
+            font-size: 11px;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        /* ==================================
+           RESPONSIVE DESIGN
+        ================================== */
+
+        @media (max-width: 1000px) {
+            .shop-filter-panel {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .shop-filter-actions {
+                align-self: end;
+            }
+
+            .shop-product-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 16px;
+            }
+
+            .shop-card-image img {
+                height: 220px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .shop-hero {
+                padding: 40px 0;
+            }
+
+            .shop-content {
+                padding-top: 28px;
+                padding-bottom: 45px;
+            }
+
+            .shop-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .shop-toolbar-category {
+                width: 100%;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .shop-toolbar-category select {
+                width: 100%;
+            }
+
+            .shop-filter-panel {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                padding: 16px;
+            }
+
+            .shop-filter-heading {
+                font-size: 19px;
+            }
+
+            .shop-filter-actions {
+                grid-column: 1 / -1;
+            }
+
+            .shop-product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .shop-card-image img {
+                height: 175px;
+                padding: 8px;
+            }
+
+            .shop-card-info {
+                padding: 11px;
+            }
+
+            .shop-card-title {
+                font-size: 15px;
+            }
+
+            .shop-card-actions {
+                gap: 6px;
+            }
+
+            .shop-card-actions .shop-button {
+                padding: 8px;
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .shop-container {
+                width: 94%;
+            }
+
+            .shop-filter-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .shop-filter-heading,
+            .shop-filter-actions {
+                grid-column: auto;
+            }
+
+            .shop-card-image img {
+                height: 145px;
+            }
+
+            .shop-card-info {
+                padding: 9px;
+            }
+
+            .shop-card-actions {
+                flex-direction: column;
+            }
+
+            .shop-card-actions .shop-button {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .shop-page *,
+            .shop-page *::before,
+            .shop-page *::after {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments :: header}"></div>
+
+<main class="shop-page">
+
+    <!-- SHOP HERO -->
+
+    <section class="shop-hero">
+        <div class="shop-container">
+
+            <div class="shop-breadcrumb">
+                <a th:href="@{/}">Home</a>
+                &nbsp;/&nbsp; Shop All
+            </div>
+
+            <span class="shop-eyebrow">Explore the collection</span>
+
+            <h1>Find Your Next Favourite.</h1>
+
+            <p>
+                Discover useful gadgets, timeless watches, thoughtful home
+                decor and everyday essentials. Browse the collection and
+                explore available marketplace options.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- SHOP CONTENT -->
+
+    <section class="shop-content">
+        <div class="shop-container">
+
+            <!-- TOOLBAR -->
+
+            <div class="shop-toolbar">
+
+                <div class="shop-results">
+                    Showing
+                    <strong id="visibleProductCount"
+                            th:text="${products != null ? products.size() : 0}">
+                        0
+                    </strong>
+                    of
+                    <strong id="totalProductCount"
+                            th:text="${products != null ? products.size() : 0}">
+                        0
+                    </strong>
+                    products
+                </div>
+
+                <div class="shop-toolbar-category">
+                    <label for="categoryQuick">Browse category</label>
+
+                    <select id="categoryQuick">
+                        <option value="">All categories</option>
+
+                        <option value="/category/electrical-and-electronics">
+                            Electrical &amp; Electronics
+                        </option>
+
+                        <option value="/category/watches">
+                            Watches
+                        </option>
+
+                        <option value="/category/laptop-accessories">
+                            Laptop Accessories
+                        </option>
+
+                        <option value="/category/mobile-accessories">
+                            Mobile Accessories
+                        </option>
+
+                        <option value="/category/home-decor">
+                            Home Decor
+                        </option>
+
+                        <option value="/category/kitchen-essentials">
+                            Kitchen Essentials
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- FILTER PANEL -->
+
+            <div class="shop-filter-panel">
+
+                <h2 class="shop-filter-heading">
+                    Refine Your Search
+                </h2>
+
+                <div class="shop-filter">
+                    <label for="categoryFilter">Category</label>
+
+                    <select id="categoryFilter">
+                        <option value="">All categories</option>
+
+                        <option value="electrical-and-electronics">
+                            Electrical &amp; Electronics
+                        </option>
+
+                        <option value="watches">Watches</option>
+
+                        <option value="laptop-accessories">
+                            Laptop Accessories
+                        </option>
+
+                        <option value="mobile-accessories">
+                            Mobile Accessories
+                        </option>
+
+                        <option value="home-decor">Home Decor</option>
+
+                        <option value="kitchen-essentials">
+                            Kitchen Essentials
+                        </option>
+                    </select>
+                </div>
+
+                <div class="shop-filter">
+                    <label for="minPrice">Minimum price (₹)</label>
+
+                    <input type="number"
+                           id="minPrice"
+                           min="0"
+                           step="1"
+                           placeholder="Min price">
+                </div>
+
+                <div class="shop-filter">
+                    <label for="maxPrice">Maximum price (₹)</label>
+
+                    <input type="number"
+                           id="maxPrice"
+                           min="0"
+                           step="1"
+                           placeholder="Max price">
+                </div>
+
+                <div class="shop-filter">
+                    <label for="sortProducts">Sort products</label>
+
+                    <select id="sortProducts">
+                        <option value="default">Default order</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A to Z</option>
+                    </select>
+                </div>
+
+                <div class="shop-filter-actions">
+                    <button type="button"
+                            id="applyFilters"
+                            class="shop-button shop-button-primary">
+                        Apply Filters
+                    </button>
+
+                    <button type="button"
+                            id="resetFilters"
+                            class="shop-button shop-button-secondary">
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+
+            <p class="shop-filter-status"
+               id="filterStatus"
+               aria-live="polite">
+                Browse all products or apply filters to narrow your search.
+            </p>
+
+            <!-- PRODUCT GRID -->
+
+            <div class="shop-product-grid"
+                 id="shopProductGrid"
+                 th:if="${products != null and !products.isEmpty()}">
+
+                <article class="shop-card"
+                         th:each="product : ${products}"
+                         th:attr="data-price=${product.price != null ? product.price : ''},
+                                  data-category=${product.category != null ? #strings.toLowerCase(product.category) : ''},
+                                  data-title=${product.title}">
+
+                    <!-- PRODUCT IMAGE -->
+
+                    <a class="shop-card-image"
+                       th:href="@{/product/{slug}(slug=${product.slug})}">
+
+                        <img
+                            th:if="${product.image1 != null and !#strings.isEmpty(product.image1)}"
+                            th:src="${product.image1}"
+                            th:alt="${product.title}"
+                            loading="lazy"
+                            decoding="async">
+
+                        <img
+                            th:unless="${product.image1 != null and !#strings.isEmpty(product.image1)}"
+                            src="https://placehold.co/600x700/faf7f0/777777?text=Product+Image"
+                            alt="Product image coming soon"
+                            loading="lazy"
+                            decoding="async">
+                    </a>
+
+                    <!-- PRODUCT INFORMATION -->
+
+                    <div class="shop-card-info">
+
+                        <span class="shop-card-category"
+                              th:text="${product.category}">
+                            Category
+                        </span>
+
+                        <a class="shop-card-title"
+                           th:href="@{/product/{slug}(slug=${product.slug})}"
+                           th:text="${product.title}">
+                            Product title
+                        </a>
+
+                        <div class="shop-card-prices">
+
+                            <span class="shop-card-price"
+                                  th:if="${product.price != null}"
+                                  th:text="${'₹' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">
+                                ₹0.00
+                            </span>
+
+                            <span class="shop-card-mrp"
+                                  th:if="${product.mrp != null and product.mrp > 0}"
+                                  th:text="${'₹' + #numbers.formatDecimal(product.mrp, 1, 'COMMA', 2, 'POINT')}">
+                                ₹0.00
+                            </span>
+
+                        </div>
+
+                        <!-- EXISTING PRODUCT DETAIL AND AFFILIATE LINKS -->
+
+                        <div class="shop-card-actions">
+
+                            <a class="shop-button shop-button-primary"
+                               th:href="@{/product/{slug}(slug=${product.slug})}">
+                                Details
+                            </a>
+
+                            <a class="shop-button shop-market-button"
+                               th:if="${product.amazonLink != null and !#strings.isEmpty(product.amazonLink)}"
+                               th:href="${product.amazonLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener noreferrer"
+                               aria-label="View product on Amazon, opens in a new tab">
+                                Amazon &#8599;
+                            </a>
+
+                            <a class="shop-button shop-market-button"
+                               th:if="${product.flipkartLink != null and !#strings.isEmpty(product.flipkartLink)}"
+                               th:href="${product.flipkartLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener noreferrer"
+                               aria-label="View product on Flipkart, opens in a new tab">
+                                Flipkart &#8599;
+                            </a>
+
+                            <a class="shop-button shop-market-button"
+                               th:if="${product.meeshoLink != null and !#strings.isEmpty(product.meeshoLink)}"
+                               th:href="${product.meeshoLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener noreferrer"
+                               aria-label="View product on Meesho, opens in a new tab">
+                                Meesho &#8599;
+                            </a>
+
+                            <a class="shop-button shop-market-button"
+                               th:if="${product.myntraLink != null and !#strings.isEmpty(product.myntraLink)}"
+                               th:href="${product.myntraLink}"
+                               target="_blank"
+                               rel="nofollow sponsored noopener noreferrer"
+                               aria-label="View product on Myntra, opens in a new tab">
+                                Myntra &#8599;
+                            </a>
+
+                        </div>
+                    </div>
+
+                </article>
+
+                <!-- SHOWN WHEN FILTERS MATCH NO PRODUCTS -->
+
+                <div class="shop-no-results"
+                     id="noFilteredProducts"
+                     style="display: none;">
+
+                    <h2>No matching products found</h2>
+
+                    <p>
+                        Try changing the category or price range to
+                        discover more products.
+                    </p>
+
+                    <button type="button"
+                            id="clearNoResults"
+                            class="shop-button shop-button-primary">
+                        Clear Filters
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- EMPTY DATABASE STATE -->
+
+            <div class="shop-no-results"
+                 th:if="${products == null or products.isEmpty()}">
+
+                <h2>Your collection starts here.</h2>
+
+                <p>
+                    No products are available yet. Once you add products
+                    through your admin panel, they will appear here.
+                </p>
+
+                <a th:href="@{/}"
+                   class="shop-button shop-button-primary">
+                    Back to Home
+                </a>
+            </div>
+
+            <!-- AFFILIATE DISCLOSURE -->
+
+            <p class="shop-disclosure"
+               th:if="${products != null and !products.isEmpty()}">
+                Some product links may be affiliate links. We may earn
+                a commission on qualifying purchases at no additional
+                cost to you. Prices and availability are determined by
+                the respective marketplace and may change.
+            </p>
+
+        </div>
+    </section>
+
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- FILTERING AND SORTING -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const grid = document.getElementById("shopProductGrid");
+
+        if (!grid) {
+            return;
+        }
+
+        const categoryFilter = document.getElementById("categoryFilter");
+        const minPriceInput = document.getElementById("minPrice");
+        const maxPriceInput = document.getElementById("maxPrice");
+        const sortSelect = document.getElementById("sortProducts");
+
+        const applyButton = document.getElementById("applyFilters");
+        const resetButton = document.getElementById("resetFilters");
+
+        const visibleCount = document.getElementById("visibleProductCount");
+        const totalCount = document.getElementById("totalProductCount");
+
+        const filterStatus = document.getElementById("filterStatus");
+        const noResults = document.getElementById("noFilteredProducts");
+        const clearNoResults = document.getElementById("clearNoResults");
+
+        const categoryQuick = document.getElementById("categoryQuick");
+
+        const initialCards = Array.from(
+            grid.querySelectorAll(".shop-card")
+        );
+
+        const totalProducts = initialCards.length;
+
+        totalCount.textContent = totalProducts;
+
+        function normalizeCategory(value) {
+            return (value || "")
+                .toLowerCase()
+                .trim()
+                .replace(/&/g, "and")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        function getSelectedCategory() {
+            return normalizeCategory(categoryFilter.value);
+        }
+
+        function applyFilters() {
+
+            const selectedCategory = getSelectedCategory();
+
+            const minText = minPriceInput.value.trim();
+            const maxText = maxPriceInput.value.trim();
+
+            const minPrice = minText === ""
+                ? null
+                : Number(minText);
+
+            const maxPrice = maxText === ""
+                ? null
+                : Number(maxText);
+
+            if (
+                (minPrice !== null && (!Number.isFinite(minPrice) || minPrice < 0)) ||
+                (maxPrice !== null && (!Number.isFinite(maxPrice) || maxPrice < 0))
+            ) {
+                filterStatus.textContent =
+                    "Please enter valid, non-negative prices.";
+
+                return;
+            }
+
+            if (
+                minPrice !== null &&
+                maxPrice !== null &&
+                minPrice > maxPrice
+            ) {
+                filterStatus.textContent =
+                    "Minimum price cannot be greater than maximum price.";
+
+                return;
+            }
+
+            let visibleProducts = 0;
+
+            initialCards.forEach(function (card) {
+
+                const cardCategory = normalizeCategory(
+                    card.dataset.category
+                );
+
+                const rawPrice = card.dataset.price;
+                const price = rawPrice === ""
+                    ? null
+                    : Number(rawPrice);
+
+					const categoryAliases = {
+					    "electrical-and-electronics": "electronics"
+					};
+
+					const expectedCategory =
+					    categoryAliases[selectedCategory] || selectedCategory;
+
+					const categoryMatches =
+					    selectedCategory === "" ||
+					    cardCategory === expectedCategory;
+
+                /*
+                 * Products without a price cannot be evaluated
+                 * against a price filter.
+                 */
+                const priceMatches =
+                    price !== null &&
+                    Number.isFinite(price)
+                        ? (
+                            (minPrice === null || price >= minPrice) &&
+                            (maxPrice === null || price <= maxPrice)
+                        )
+                        : minPrice === null && maxPrice === null;
+
+                const showProduct = categoryMatches && priceMatches;
+
+                card.style.display = showProduct ? "" : "none";
+
+                if (showProduct) {
+                    visibleProducts++;
+                }
+            });
+
+            visibleCount.textContent = visibleProducts;
+
+            const sortValue = sortSelect.value;
+
+            const sortedCards = initialCards.slice();
+
+            if (sortValue === "price-low") {
+
+                sortedCards.sort(function (a, b) {
+                    const priceA = Number(a.dataset.price);
+                    const priceB = Number(b.dataset.price);
+
+                    const validA = a.dataset.price !== "" &&
+                        Number.isFinite(priceA);
+
+                    const validB = b.dataset.price !== "" &&
+                        Number.isFinite(priceB);
+
+                    if (!validA && !validB) return 0;
+                    if (!validA) return 1;
+                    if (!validB) return -1;
+
+                    return priceA - priceB;
+                });
+
+            } else if (sortValue === "price-high") {
+
+                sortedCards.sort(function (a, b) {
+                    const priceA = Number(a.dataset.price);
+                    const priceB = Number(b.dataset.price);
+
+                    const validA = a.dataset.price !== "" &&
+                        Number.isFinite(priceA);
+
+                    const validB = b.dataset.price !== "" &&
+                        Number.isFinite(priceB);
+
+                    if (!validA && !validB) return 0;
+                    if (!validA) return 1;
+                    if (!validB) return -1;
+
+                    return priceB - priceA;
+                });
+
+            } else if (sortValue === "name") {
+
+                sortedCards.sort(function (a, b) {
+                    return (a.dataset.title || "").localeCompare(
+                        b.dataset.title || "",
+                        undefined,
+                        { sensitivity: "base" }
+                    );
+                });
+            }
+
+            sortedCards.forEach(function (card) {
+                grid.appendChild(card);
+            });
+
+            if (noResults) {
+                noResults.style.display =
+                    visibleProducts === 0 ? "block" : "none";
+            }
+
+            if (visibleProducts === 0) {
+                filterStatus.textContent =
+                    "No products match your selected filters.";
+            } else {
+                filterStatus.textContent =
+                    "Showing " + visibleProducts +
+                    " of " + totalProducts + " products.";
+            }
+        }
+
+        function resetFilters() {
+
+            categoryFilter.value = "";
+            minPriceInput.value = "";
+            maxPriceInput.value = "";
+            sortSelect.value = "default";
+
+            applyFilters();
+        }
+
+        applyButton.addEventListener("click", applyFilters);
+
+        resetButton.addEventListener("click", resetFilters);
+
+        if (clearNoResults) {
+            clearNoResults.addEventListener("click", resetFilters);
+        }
+
+        sortSelect.addEventListener("change", applyFilters);
+
+        categoryFilter.addEventListener("change", applyFilters);
+
+		categoryQuick.addEventListener("change", function () {
+
+		    const selectedUrl = categoryQuick.value;
+
+		    if (!selectedUrl) {
+		        categoryFilter.value = "";
+		    } else {
+		        const categoryName = selectedUrl
+		            .substring(selectedUrl.lastIndexOf("/") + 1)
+		            .replace(/-/g, " ");
+
+		        categoryFilter.value =
+		            normalizeCategory(categoryName) === "electrical-and-electronics"
+		                ? "electrical-and-electronics"
+		                : normalizeCategory(categoryName);
+		    }
+
+		    applyFilters();
+		});
+
+        /*
+         * Pressing Enter in either price input applies filters.
+         */
+        minPriceInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                applyFilters();
+            }
+        });
+
+        maxPriceInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                applyFilters();
+            }
+        });
+
+        applyFilters();
+    });
+</script>
+
+</body>
+</html>

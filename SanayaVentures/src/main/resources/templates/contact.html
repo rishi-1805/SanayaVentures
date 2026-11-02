@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Sanaya Ventures</title>
+    <meta name="description" content="Contact Sanaya Ventures for website-related questions and feedback.">
+    <th:block th:replace="~{fragments :: styles}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main class="container content-wrap">
+    <div class="section-heading">
+        <span class="eyebrow">We would love to hear from you</span>
+        <h1 class="page-title">Contact Us</h1>
+        <p class="muted">Have a question about our website or a product listing? Get in touch.</p>
+    </div>
+
+    <div class="detail-grid">
+        <section>
+            <h2>Get in Touch</h2>
+            <p class="muted">For questions, feedback or website-related enquiries, use one of the contact options below.</p>
+
+            <div class="trust-item" style="text-align:left;padding-left:0">
+                <h3>✉ Email</h3>
+                <!-- Replace with your real business email -->
+                <p><a href="mailto:rishijain0107@gmail.com">rishijain0107@gmail.com</a></p>
+            </div>
+
+			<div class="trust-item" style="text-align:left;padding-left:0">
+
+			    <h3>☏ WhatsApp</h3>
+
+			    <p>
+			        <a href="https://wa.me/919784917079"
+			           target="_blank"
+			           rel="noopener noreferrer"
+			           aria-label="Chat with us on WhatsApp">
+			            Chat with us on WhatsApp ↗
+			        </a>
+			    </p>
+
+			</div>
+
+            <div class="affiliate-note">
+                Please note that purchases, payments, deliveries, refunds and returns are handled by the external marketplace where you place your order.
+            </div>
+        </section>
+
+        <section class="section-soft" style="padding:25px">
+            <h2>Before You Contact Us</h2>
+            <p class="muted">For an order placed on an external marketplace, please contact that marketplace or seller directly. They can access your order details and provide support for delivery, cancellations, returns and refunds.</p>
+
+            <h3>Product listing feedback</h3>
+            <p class="muted">If you notice an incorrect product description, broken link or outdated listing, send us the product name and page link so we can review it.</p>
+
+            <a th:href="@{/shop}" class="btn btn-gold">Browse Products</a>
+        </section>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

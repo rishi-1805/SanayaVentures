@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Sanaya Ventures</title>
+    <meta name="description" content="Learn about Sanaya Ventures and our approach to discovering useful lifestyle products.">
+    <th:block th:replace="~{fragments :: styles}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main>
+    <section class="hero" style="min-height:340px;background-image:linear-gradient(90deg,#171612ed,#17161270),url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80')">
+        <div class="container">
+            <div class="hero-content">
+                <span class="eyebrow">Our story</span>
+                <h1>Discoveries for Better Living.</h1>
+                <p>We make exploring useful products across everyday categories simpler and more convenient.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container text-content">
+            <span class="eyebrow">Who we are</span>
+            <h2>Welcome to Sanaya Ventures</h2>
+            <p>Sanaya Ventures is a product discovery website created to help visitors explore a variety of products in one place. Our categories include electronics, watches, laptop and mobile accessories, home decor, kitchen essentials and other lifestyle products.</p>
+
+            <h2>What We Do</h2>
+            <p>We showcase product information and provide links to external shopping marketplaces when available. This helps visitors explore product listings and make their own purchasing decisions on the marketplace websites.</p>
+
+            <h2>Our Approach</h2>
+            <p>We aim to make product discovery clear and convenient by presenting relevant product details, descriptions, images and available shopping links. We encourage visitors to review the latest product specifications, prices, seller details, delivery conditions and return policies on the marketplace before buying.</p>
+
+            <h2>How Shopping Works</h2>
+            <p>Sanaya Ventures does not directly process orders or payments through this website. When you choose a marketplace link, you leave our website and visit the external marketplace. Any purchase is subject to that marketplace's terms and policies.</p>
+
+            <h2>Affiliate Disclosure</h2>
+            <p>Some links may be affiliate links. We may receive a commission if you make a qualifying purchase through those links, at no additional cost to you. The availability of affiliate links can vary by product and marketplace.</p>
+
+            <div style="margin-top:28px">
+                <a th:href="@{/shop}" class="btn btn-gold">Explore Products ↗</a>
+                <a th:href="@{/contact-us}" class="btn btn-outline" style="margin-left:8px">Contact Us</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

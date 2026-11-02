@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page Title -->
+    <title th:text="${product != null ? product.title + ' | SA Sanaya Ventures' : 'Product Details | SA Sanaya Ventures'}">
+        Product Details | SA Sanaya Ventures
+    </title>
+
+	<!-- SEO Meta Description -->
+	<meta name="description"
+	      th:content="${product != null and product.shortDescription != null and !#strings.isEmpty(product.shortDescription)
+	          ? product.shortDescription
+	          : 'Discover curated products at SA Sanaya Ventures. Explore product details and available shopping options.'}">
+
+    <!-- Open Graph: WhatsApp and Social Media Previews -->
+    <meta property="og:site_name" content="SA Sanaya Ventures">
+    <meta property="og:type" content="product">
+
+    <meta property="og:title"
+          th:content="${product != null ? product.title + ' | SA Sanaya Ventures' : 'Product Details | SA Sanaya Ventures'}">
+
+    <meta property="og:description"
+          th:if="${product != null and product.shortDescription != null and !#strings.isEmpty(product.shortDescription)}"
+          th:content="${product.shortDescription}">
+
+    <meta property="og:image"
+          th:if="${product != null and product.image1 != null and !#strings.isEmpty(product.image1)}"
+          th:content="${product.image1}">
+
+    <!-- Twitter/X Sharing Preview -->
+    <meta name="twitter:card" content="summary_large_image">
+
+    <meta name="twitter:title"
+          th:content="${product != null ? product.title + ' | SA Sanaya Ventures' : 'Product Details | SA Sanaya Ventures'}">
+
+    <meta name="twitter:description"
+          th:if="${product != null and product.shortDescription != null and !#strings.isEmpty(product.shortDescription)}"
+          th:content="${product.shortDescription}">
+
+    <meta name="twitter:image"
+          th:if="${product != null and product.image1 != null and !#strings.isEmpty(product.image1)}"
+          th:content="${product.image1}">
+		  
+		  <link rel="canonical"
+		  th:if="${product != null and product.slug != null}"
+		  th:href="@{/product/{slug}(slug=${product.slug})}">
+
+    <!-- Existing Shared Styles -->
+    <th:block th:replace="~{fragments :: styles}"></th:block>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --detail-bg: #fbf8f2;
+            --detail-card: #ffffff;
+            --detail-ink: #29241f;
+            --detail-muted: #81786f;
+            --detail-accent: #a87943;
+            --detail-border: #e9e0d4;
+            --detail-wine: #4a292d;
+        }
+
+        body {
+            background: var(--detail-bg);
+            color: var(--detail-ink);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .product-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 22px 70px;
+        }
+
+        .product-breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            align-items: center;
+            margin: 4px 0 28px;
+            color: var(--detail-muted);
+            font-size: 13px;
+        }
+
+        .product-breadcrumb a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .product-breadcrumb a:hover {
+            color: var(--detail-accent);
+        }
+
+        .product-breadcrumb .current {
+            color: var(--detail-ink);
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .product-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+            gap: clamp(28px, 5vw, 68px);
+            align-items: start;
+        }
+
+        .gallery {
+            min-width: 0;
+        }
+
+        .gallery-main {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 340px;
+            aspect-ratio: 4 / 4.5;
+            background: #f0e9df;
+            border: 1px solid var(--detail-border);
+            border-radius: 8px;
+        }
+
+        .gallery-main img {
+            width: 100%;
+            height: 100%;
+            max-height: 660px;
+            object-fit: contain;
+            display: block;
+            transition: opacity .2s ease;
+        }
+
+        .gallery-thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .gallery-thumb {
+            width: 76px;
+            height: 82px;
+            padding: 4px;
+            border: 1px solid var(--detail-border);
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .gallery-thumb:hover,
+        .gallery-thumb.active {
+            border: 2px solid var(--detail-accent);
+            padding: 3px;
+        }
+
+        .gallery-thumb:focus-visible,
+        .marketplace-btn:focus-visible,
+        .back-to-shop:focus-visible {
+            outline: 3px solid var(--detail-accent);
+            outline-offset: 3px;
+        }
+
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .product-info {
+            padding: 8px 0;
+            min-width: 0;
+        }
+
+        .product-eyebrow {
+            display: inline-block;
+            color: var(--detail-accent);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .product-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(30px, 3.5vw, 43px);
+            font-weight: 600;
+            line-height: 1.18;
+            letter-spacing: -.5px;
+            margin: 0 0 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .product-brand {
+            color: var(--detail-muted);
+            font-size: 14px;
+            margin: 0 0 23px;
+        }
+
+        .product-brand strong {
+            color: var(--detail-ink);
+        }
+
+        .price-panel {
+            padding: 19px 0;
+            border-top: 1px solid var(--detail-border);
+            border-bottom: 1px solid var(--detail-border);
+            margin-bottom: 21px;
+        }
+
+        .price-label {
+            display: block;
+            color: var(--detail-muted);
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .price-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 11px;
+            align-items: baseline;
+        }
+
+        .current-price {
+            font-size: 31px;
+            font-weight: 700;
+            letter-spacing: -.7px;
+        }
+
+        .original-price {
+            color: #958b80;
+            font-size: 17px;
+            text-decoration: line-through;
+        }
+
+        .product-summary {
+            color: #655d54;
+            font-size: 15px;
+            line-height: 1.9;
+            margin: 0 0 23px;
+            overflow-wrap: anywhere;
+        }
+
+        .marketplace-heading {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            margin-bottom: 12px;
+        }
+
+        .marketplace-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .marketplace-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            min-height: 49px;
+            padding: 12px 10px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            color: #fff !important;
+            text-decoration: none !important;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .marketplace-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 30, 20, .12);
+        }
+
+        .marketplace-amazon {
+            background: #282723;
+        }
+
+        .marketplace-flipkart {
+            background: #1768bb;
+        }
+
+        .marketplace-meesho {
+            background: #a92969;
+        }
+
+        .marketplace-myntra {
+            background: #b83c52;
+        }
+
+        .marketplace-note {
+            color: var(--detail-muted);
+            font-size: 11px;
+            line-height: 1.8;
+            margin-bottom: 14px;
+        }
+
+        .affiliate-disclosure {
+            background: #f2ece2;
+            border-left: 3px solid var(--detail-accent);
+            padding: 13px 15px;
+            margin: 18px 0 25px;
+            color: #65594d;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .product-section {
+            padding: 22px 0;
+            border-top: 1px solid var(--detail-border);
+        }
+
+        .product-section h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 23px;
+            font-weight: 600;
+            margin: 0 0 12px;
+        }
+
+        .product-section p {
+            color: #655d54;
+            font-size: 14px;
+            line-height: 1.95;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+            margin: 0;
+        }
+
+        .back-to-shop {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 12px 19px;
+            border: 1px solid var(--detail-wine);
+            border-radius: 4px;
+            color: var(--detail-wine) !important;
+            text-decoration: none !important;
+            font-size: 13px;
+            font-weight: 700;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .back-to-shop:hover {
+            background: var(--detail-wine);
+            color: white !important;
+        }
+
+        .empty-product {
+            text-align: center;
+            background: white;
+            padding: 65px 22px;
+            border: 1px solid var(--detail-border);
+            border-radius: 8px;
+        }
+
+        .empty-product h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+
+        .empty-product p {
+            color: var(--detail-muted);
+            margin-bottom: 22px;
+        }
+
+        @media (max-width: 760px) {
+            .product-page {
+                padding: 18px 15px 45px;
+            }
+
+            .product-layout {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+
+            .gallery-main {
+                min-height: 260px;
+                aspect-ratio: 1 / 1;
+            }
+
+            .gallery-main img {
+                max-height: 520px;
+            }
+
+            .product-info {
+                padding-top: 0;
+            }
+
+            .product-title {
+                font-size: 32px;
+            }
+
+            .current-price {
+                font-size: 28px;
+            }
+
+            .gallery-thumb {
+                width: 66px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .marketplace-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments :: header}"></div>
+
+<main class="product-page" th:if="${product != null}">
+
+    <!-- Breadcrumb -->
+    <nav class="product-breadcrumb" aria-label="Breadcrumb">
+        <a th:href="@{/}">Home</a>
+        <span aria-hidden="true">/</span>
+        <a th:href="@{/shop}">Shop</a>
+        <span aria-hidden="true">/</span>
+        <span class="current" aria-current="page"
+              th:text="${product.title}">Product</span>
+    </nav>
+
+    <div class="product-layout">
+
+        <!-- Product Image Gallery -->
+        <section class="gallery" aria-label="Product images">
+
+            <div class="gallery-main">
+                <img id="mainProductImage"
+                     th:src="${product.image1 != null and !#strings.isEmpty(product.image1)
+                         ? product.image1
+                         : 'https://placehold.co/700x800/f0e9df/655d54?text=Product+Image'}"
+                     th:alt="${product.title}"
+                     onerror="this.onerror=null;this.src='https://placehold.co/700x800/f0e9df/655d54?text=Image+Unavailable'">
+            </div>
+
+            <div class="gallery-thumbnails">
+
+                <button type="button"
+                        class="gallery-thumb active"
+                        th:if="${product.image1 != null and !#strings.isEmpty(product.image1)}"
+                        th:attr="data-image=${product.image1}"
+                        onclick="changeProductImage(this)"
+                        aria-label="Show product image 1"
+                        aria-pressed="true">
+                    <img th:src="${product.image1}"
+                         th:alt="${product.title + ' image 1'}">
+                </button>
+
+                <button type="button"
+                        class="gallery-thumb"
+                        th:if="${product.image2 != null and !#strings.isEmpty(product.image2)}"
+                        th:attr="data-image=${product.image2}"
+                        onclick="changeProductImage(this)"
+                        aria-label="Show product image 2"
+                        aria-pressed="false">
+                    <img th:src="${product.image2}"
+                         th:alt="${product.title + ' image 2'}">
+                </button>
+
+                <button type="button"
+                        class="gallery-thumb"
+                        th:if="${product.image3 != null and !#strings.isEmpty(product.image3)}"
+                        th:attr="data-image=${product.image3}"
+                        onclick="changeProductImage(this)"
+                        aria-label="Show product image 3"
+                        aria-pressed="false">
+                    <img th:src="${product.image3}"
+                         th:alt="${product.title + ' image 3'}">
+                </button>
+
+                <button type="button"
+                        class="gallery-thumb"
+                        th:if="${product.image4 != null and !#strings.isEmpty(product.image4)}"
+                        th:attr="data-image=${product.image4}"
+                        onclick="changeProductImage(this)"
+                        aria-label="Show product image 4"
+                        aria-pressed="false">
+                    <img th:src="${product.image4}"
+                         th:alt="${product.title + ' image 4'}">
+                </button>
+
+                <button type="button"
+                        class="gallery-thumb"
+                        th:if="${product.image5 != null and !#strings.isEmpty(product.image5)}"
+                        th:attr="data-image=${product.image5}"
+                        onclick="changeProductImage(this)"
+                        aria-label="Show product image 5"
+                        aria-pressed="false">
+                    <img th:src="${product.image5}"
+                         th:alt="${product.title + ' image 5'}">
+                </button>
+
+            </div>
+        </section>
+
+        <!-- Product Information -->
+        <section class="product-info">
+
+            <span class="product-eyebrow"
+                  th:text="${product.category != null and !#strings.isEmpty(product.category)
+                      ? product.category : 'Curated Collection'}">
+                Curated Collection
+            </span>
+
+            <h1 class="product-title" th:text="${product.title}">
+                Product name
+            </h1>
+
+            <p class="product-brand"
+               th:if="${product.brand != null and !#strings.isEmpty(product.brand)}">
+                Brand:
+                <strong th:text="${product.brand}">Brand name</strong>
+            </p>
+
+            <!-- Pricing -->
+            <div class="price-panel">
+                <span class="price-label">Listed product price</span>
+
+                <div class="price-line">
+                    <span class="current-price"
+                          th:if="${product.price != null}">
+                        ₹<span th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                    </span>
+
+                    <span class="original-price"
+                          th:if="${product.mrp != null and product.mrp > 0}"
+                          th:text="${'MRP ₹' + #numbers.formatDecimal(product.mrp, 1, 'COMMA', 2, 'POINT')}"
+                        MRP ₹0.00
+                    </span>
+                </div>
+            </div>
+
+            <!-- Short Description -->
+            <p class="product-summary"
+               th:if="${product.shortDescription != null and !#strings.isEmpty(product.shortDescription)}"
+               th:text="${product.shortDescription}">
+                Product summary
+            </p>
+
+			
+			<!-- Marketplace Affiliate Buttons -->
+			<div class="marketplace-section">
+
+			    <p class="marketplace-heading">Explore this product</p>
+
+			    <div class="marketplace-buttons">
+
+			        <!-- Amazon -->
+			        <a class="marketplace-btn marketplace-amazon"
+			           th:if="${product.amazonLink != null and !#strings.isEmpty(product.amazonLink)}"
+			           th:href="@{/go/{slug}/{marketplace}(slug=${product.slug},marketplace='amazon')}"
+			           target="_blank"
+			           rel="nofollow sponsored noopener noreferrer"
+			           aria-label="View product on Amazon (opens in a new tab)">
+			            View on Amazon <span aria-hidden="true">↗</span>
+			        </a>
+
+			        <!-- Flipkart -->
+			        <a class="marketplace-btn marketplace-flipkart"
+			           th:if="${product.flipkartLink != null and !#strings.isEmpty(product.flipkartLink)}"
+			           th:href="@{/go/{slug}/{marketplace}(slug=${product.slug},marketplace='flipkart')}"
+			           target="_blank"
+			           rel="nofollow sponsored noopener noreferrer"
+			           aria-label="View product on Flipkart (opens in a new tab)">
+			            View on Flipkart <span aria-hidden="true">↗</span>
+			        </a>
+
+			        <!-- Meesho -->
+			        <a class="marketplace-btn marketplace-meesho"
+			           th:if="${product.meeshoLink != null and !#strings.isEmpty(product.meeshoLink)}"
+			           th:href="@{/go/{slug}/{marketplace}(slug=${product.slug},marketplace='meesho')}"
+			           target="_blank"
+			           rel="nofollow sponsored noopener noreferrer"
+			           aria-label="View product on Meesho (opens in a new tab)">
+			            View on Meesho <span aria-hidden="true">↗</span>
+			        </a>
+
+			        <!-- Myntra -->
+			        <a class="marketplace-btn marketplace-myntra"
+			           th:if="${product.myntraLink != null and !#strings.isEmpty(product.myntraLink)}"
+			           th:href="@{/go/{slug}/{marketplace}(slug=${product.slug},marketplace='myntra')}"
+			           target="_blank"
+			           rel="nofollow sponsored noopener noreferrer"
+			           aria-label="View product on Myntra (opens in a new tab)">
+			            View on Myntra <span aria-hidden="true">↗</span>
+			        </a>
+
+			    </div>
+
+			    <!-- Message when no marketplace links are available -->
+			    <p class="marketplace-note"
+			       th:if="${(product.amazonLink == null or #strings.isEmpty(product.amazonLink))
+			           and (product.flipkartLink == null or #strings.isEmpty(product.flipkartLink))
+			           and (product.meeshoLink == null or #strings.isEmpty(product.meeshoLink))
+			           and (product.myntraLink == null or #strings.isEmpty(product.myntraLink))}">
+			        Shopping links for this product have not been added yet.
+			    </p>
+
+			    <p class="marketplace-note">
+			        Prices, offers and availability may change. Please check the marketplace
+			        for the latest price and product details.
+			    </p>
+
+			    <!-- Affiliate Disclosure -->
+			    <div class="affiliate-disclosure">
+			        <strong>Affiliate disclosure:</strong>
+			        SA Sanaya Ventures may earn a commission from qualifying purchases made
+			        through eligible affiliate links, at no additional cost to you.
+			    </div>
+
+			
+
+
+                <!-- Message when no links are available -->
+                <p class="marketplace-note"
+                   th:if="${(product.amazonLink == null or #strings.isEmpty(product.amazonLink))
+                       and (product.flipkartLink == null or #strings.isEmpty(product.flipkartLink))
+                       and (product.meeshoLink == null or #strings.isEmpty(product.meeshoLink))
+                       and (product.myntraLink == null or #strings.isEmpty(product.myntraLink))}">
+                    Shopping links for this product have not been added yet.
+                </p>
+
+                <p class="marketplace-note">
+                    Prices, offers and availability may change. Please check the marketplace
+                    for the latest price and product details.
+                </p>
+
+                <!-- Affiliate Disclosure -->
+                <div class="affiliate-disclosure">
+                    <strong>Affiliate disclosure:</strong>
+                    SA Sanaya Ventures may earn a commission from qualifying purchases made
+                    through eligible affiliate links, at no additional cost to you.
+                </div>
+            </div>
+
+            <!-- Long Description -->
+            <section class="product-section"
+                     th:if="${product.longDescription != null and !#strings.isEmpty(product.longDescription)}">
+                <h2>About this product</h2>
+                <p th:text="${product.longDescription}">Product description</p>
+            </section>
+
+            <!-- Specifications -->
+            <section class="product-section"
+                     th:if="${product.specifications != null and !#strings.isEmpty(product.specifications)}">
+                <h2>Product specifications</h2>
+                <p th:text="${product.specifications}">Product specifications</p>
+            </section>
+
+            <a th:href="@{/shop}" class="back-to-shop">
+                <span aria-hidden="true">←</span> Continue browsing
+            </a>
+
+        </section>
+    </div>
+</main>
+
+<!-- Product Not Found -->
+<main class="product-page" th:if="${product == null}">
+    <section class="empty-product">
+        <h1>Product not found</h1>
+        <p>This product may have been removed or the link may be incorrect.</p>
+        <a th:href="@{/shop}" class="back-to-shop">Return to Shop</a>
+    </section>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+<!-- Product Gallery JavaScript -->
+<script>
+    function changeProductImage(button) {
+        const mainImage = document.getElementById('mainProductImage');
+        const imageUrl = button.getAttribute('data-image');
+
+        if (!mainImage || !imageUrl) {
+            return;
+        }
+
+        mainImage.src = imageUrl;
+
+        document.querySelectorAll('.gallery-thumb').forEach(function (thumb) {
+            thumb.classList.remove('active');
+            thumb.setAttribute('aria-pressed', 'false');
+        });
+
+        button.classList.add('active');
+        button.setAttribute('aria-pressed', 'true');
+    }
+</script>
+
+</body>
+</html>
+ 

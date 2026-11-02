@@ -1,0 +1,802 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | Sanaya Ventures</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #b18a43;
+            --gold-light: #f4ead5;
+            --dark: #202020;
+            --wine: #4a292d;
+            --cream: #f7f4ed;
+            --muted: #77736d;
+            --border: #eee7db;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--dark);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Top navigation */
+        .topbar {
+            background: var(--dark);
+            padding: 17px 0;
+        }
+
+        .brand {
+            color: #d8b56d;
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .brand:hover {
+            color: #f0d79e;
+        }
+
+        .topbar-label {
+            color: #c6c0b6;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .website-btn {
+            border: 1px solid #a99c84;
+            color: white;
+            border-radius: 7px;
+            padding: 9px 15px;
+            font-size: 13px;
+        }
+
+        .website-btn:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+        }
+
+        /* Main content */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 42px 20px 55px;
+        }
+
+        .eyebrow {
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(30px, 4vw, 43px);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 10px;
+            line-height: 1.7;
+        }
+
+        .gold-btn {
+            background: var(--gold);
+            color: white;
+            border: 1px solid var(--gold);
+            border-radius: 7px;
+            padding: 12px 18px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.2s ease;
+        }
+
+        .gold-btn:hover {
+            background: #947037;
+            border-color: #947037;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .outline-btn {
+            background: white;
+            color: var(--dark);
+            border: 1px solid #dcd4c7;
+            border-radius: 7px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .outline-btn:hover {
+            border-color: var(--gold);
+            color: var(--wine);
+            background: #fffdf8;
+        }
+
+        /* Welcome panel */
+        .welcome-panel {
+            background: var(--dark);
+            color: white;
+            border-radius: 15px;
+            padding: 32px;
+            margin-top: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-panel::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            border: 1px solid rgba(216, 181, 109, 0.22);
+            border-radius: 50%;
+            right: -65px;
+            top: -105px;
+            pointer-events: none;
+        }
+
+        .welcome-panel::before {
+            content: "";
+            position: absolute;
+            width: 155px;
+            height: 155px;
+            border: 1px solid rgba(216, 181, 109, 0.16);
+            border-radius: 50%;
+            right: -25px;
+            top: -68px;
+            pointer-events: none;
+        }
+
+        .welcome-kicker {
+            color: #d8b56d;
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .welcome-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 3vw, 34px);
+            margin: 12px 0;
+        }
+
+        .welcome-text {
+            color: #d0cbc2;
+            font-size: 14px;
+            line-height: 1.8;
+            max-width: 550px;
+            margin-bottom: 0;
+        }
+
+        /* Overview cards */
+        .section-heading {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .section-description {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .stat-card {
+            height: 100%;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 24px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 25px rgba(45, 35, 20, 0.06);
+        }
+
+        .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 11px;
+            background: var(--gold-light);
+            color: var(--wine);
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .stat-value {
+            font-size: 34px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .stat-note {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        /* Quick action cards */
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 25px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            color: var(--dark);
+            transition: 0.2s ease;
+        }
+
+        .action-card:hover {
+            color: var(--dark);
+            border-color: #c7a76b;
+            transform: translateY(-3px);
+            box-shadow: 0 9px 25px rgba(45, 35, 20, 0.06);
+        }
+
+        .action-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: #f6f0e4;
+            color: var(--wine);
+            font-size: 21px;
+            margin-bottom: 19px;
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .action-description {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .action-link {
+            color: #947037;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: auto;
+        }
+
+        /* Store information */
+        .info-panel {
+            height: 100%;
+            padding: 25px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+        }
+
+        .info-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid #f0ebe3;
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            color: var(--muted);
+        }
+
+        .status {
+            display: inline-block;
+            background: #e6f4e9;
+            color: #26713a;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding-top: 22px;
+            margin-top: 40px;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 767px) {
+            .dashboard {
+                padding: 28px 15px 40px;
+            }
+
+            .welcome-panel {
+                padding: 25px 21px;
+                margin-top: 25px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .action-card {
+                padding: 21px;
+            }
+
+            .topbar-label {
+                display: none;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .brand {
+                font-size: 15px;
+            }
+
+            .website-btn {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Top navigation -->
+<nav class="topbar">
+    <div class="container d-flex justify-content-between align-items-center gap-3">
+
+        <a class="brand" th:href="@{/admin}">
+            SA SANAYA VENTURES
+        </a>
+
+        <div class="d-flex align-items-center gap-3">
+            <span class="topbar-label">ADMINISTRATION</span>
+
+            <a class="website-btn" th:href="@{/}">
+                View Website ↗
+            </a>
+        </div>
+
+    </div>
+</nav>
+
+<main class="dashboard">
+
+    <!-- Page heading -->
+    <section class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+
+        <div>
+            <p class="eyebrow">STORE MANAGEMENT</p>
+
+            <h1 class="page-title">
+                Admin Dashboard
+            </h1>
+
+            <p class="page-subtitle mb-0">
+                Manage your product catalogue and keep your store organised.
+            </p>
+        </div>
+
+        <a class="gold-btn" th:href="@{/admin/products/new}">
+            + Add New Product
+        </a>
+
+    </section>
+
+    <!-- Success and error messages -->
+    <div th:if="${successMessage}"
+         class="alert alert-success mt-4 mb-0"
+         role="alert"
+         th:text="${successMessage}">
+    </div>
+
+    <div th:if="${errorMessage}"
+         class="alert alert-danger mt-4 mb-0"
+         role="alert"
+         th:text="${errorMessage}">
+    </div>
+
+    <!-- Welcome banner -->
+    <section class="welcome-panel">
+
+        <p class="welcome-kicker mb-0">
+            Welcome to your workspace
+        </p>
+
+        <h2 class="welcome-title">
+            Your store, beautifully organised.
+        </h2>
+
+        <p class="welcome-text">
+            Manage the products you showcase, maintain your catalogue,
+            and help visitors discover products through your affiliate
+            shopping links.
+        </p>
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+            <a th:href="@{/admin/products}" class="gold-btn">
+                Manage Products →
+            </a>
+
+            <a th:href="@{/shop}" class="website-btn">
+                Explore Shop
+            </a>
+        </div>
+
+    </section>
+
+    <!-- Store overview -->
+    <section class="mt-5">
+
+        <div class="mb-4">
+            <h2 class="section-heading">
+                Store Overview
+            </h2>
+
+            <p class="section-description mb-0">
+                A quick look at your current product catalogue.
+            </p>
+        </div>
+
+        <div class="row g-3">
+
+            <!-- Total products -->
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        ♧
+                    </div>
+
+                    <p class="stat-label">
+                        Total Products
+                    </p>
+
+                    <div class="stat-value"
+                         th:text="${totalProducts != null ? totalProducts : 0}">
+                        0
+                    </div>
+
+                    <p class="stat-note mb-0">
+                        Products in your catalogue
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Catalogue management -->
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <a th:href="@{/admin/products}"
+                   class="stat-card d-block text-decoration-none">
+
+                    <div class="stat-icon">
+                        ▤
+                    </div>
+
+                    <p class="stat-label">
+                        Product Catalogue
+                    </p>
+
+                    <div class="stat-value"
+                         style="font-size: 24px;">
+                        Manage
+                    </div>
+
+                    <p class="stat-note mb-0">
+                        View, edit and remove products
+                    </p>
+
+                </a>
+
+            </div>
+
+            <!-- Add product -->
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <a th:href="@{/admin/products/new}"
+                   class="stat-card d-block text-decoration-none">
+
+                    <div class="stat-icon">
+                        +
+                    </div>
+
+                    <p class="stat-label">
+                        Expand Your Store
+                    </p>
+
+                    <div class="stat-value"
+                         style="font-size: 24px;">
+                        Add Product
+                    </div>
+
+                    <p class="stat-note mb-0">
+                        Showcase another product
+                    </p>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Quick actions -->
+    <section class="mt-5">
+
+        <div class="mb-4">
+            <h2 class="section-heading">
+                Quick Actions
+            </h2>
+
+            <p class="section-description mb-0">
+                Everything you need to manage your store in one place.
+            </p>
+        </div>
+
+        <div class="row g-3">
+
+            <!-- Manage products -->
+            <div class="col-12 col-md-6 col-lg-4">
+
+                <a th:href="@{/admin/products}" class="action-card">
+
+                    <div class="action-icon">
+                        ▦
+                    </div>
+
+                    <h3 class="action-title">
+                        Manage Products
+                    </h3>
+
+                    <p class="action-description">
+                        View your inventory, search products, filter
+                        categories and update existing listings.
+                    </p>
+
+                    <span class="action-link">
+                        Open product catalogue →
+                    </span>
+
+                </a>
+
+            </div>
+
+            <!-- Add product -->
+            <div class="col-12 col-md-6 col-lg-4">
+
+                <a th:href="@{/admin/products/new}" class="action-card">
+
+                    <div class="action-icon">
+                        ＋
+                    </div>
+
+                    <h3 class="action-title">
+                        Add New Product
+                    </h3>
+
+                    <p class="action-description">
+                        Add a product with its images, descriptions,
+                        pricing and available affiliate links.
+                    </p>
+
+                    <span class="action-link">
+                        Create a product →
+                    </span>
+
+                </a>
+
+            </div>
+
+            <!-- View website -->
+            <div class="col-12 col-md-6 col-lg-4">
+
+                <a th:href="@{/}" class="action-card">
+
+                    <div class="action-icon">
+                        ↗
+                    </div>
+
+                    <h3 class="action-title">
+                        View Your Website
+                    </h3>
+
+                    <p class="action-description">
+                        Visit your public storefront and review how
+                        customers see your products.
+                    </p>
+
+                    <span class="action-link">
+                        Visit storefront →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Store information -->
+    <section class="mt-5">
+
+        <div class="row g-3">
+
+            <div class="col-12 col-lg-7">
+
+                <div class="info-panel">
+
+                    <h3 class="info-title">
+                        Your Store at a Glance
+                    </h3>
+
+                    <div class="info-row">
+                        <span class="info-label">
+                            Store Name
+                        </span>
+
+                        <strong>SA Sanaya Ventures</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">
+                            Business Model
+                        </span>
+
+                        <strong>Affiliate Store</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">
+                            Product Management
+                        </span>
+
+                        <span class="status">
+                            Available
+                        </span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">
+                            Shopping Method
+                        </span>
+
+                        <strong>External Shopping Links</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-12 col-lg-5">
+
+                <div class="info-panel">
+
+                    <h3 class="info-title">
+                        Helpful Shortcuts
+                    </h3>
+
+                    <div class="info-row">
+                        <a th:href="@{/admin/products}"
+                           class="text-dark fw-semibold">
+                            All Products
+                        </a>
+
+                        <span>→</span>
+                    </div>
+
+                    <div class="info-row">
+                        <a th:href="@{/shop}"
+                           class="text-dark fw-semibold">
+                            Public Shop
+                        </a>
+
+                        <span>→</span>
+                    </div>
+
+                    <div class="info-row">
+                        <a th:href="@{/about-us}"
+                           class="text-dark fw-semibold">
+                            About Us Page
+                        </a>
+
+                        <span>→</span>
+                    </div>
+
+                    <div class="info-row">
+                        <a th:href="@{/contact-us}"
+                           class="text-dark fw-semibold">
+                            Contact Page
+                        </a>
+
+                        <span>→</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="mb-1">
+            <strong>SA SANAYA VENTURES</strong>
+        </p>
+
+        <p class="mb-0">
+            Curated finds. Thoughtful choices. Effortless shopping.
+        </p>
+    </footer>
+
+</main>
+
+</body>
+</html>
